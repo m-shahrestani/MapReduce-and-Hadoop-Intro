@@ -1,0 +1,33 @@
+# regex
+pattern = re.compile(r''',(?=(?:(?:[^"]*"){2})*[^"]*$)''')
+tweet_info = pattern.split(tweet)
+
+# webserver for transfer file to host
+python3 -m http.server
+
+# start
+start-dfs.sh
+start-yarn.sh
+
+# test command
+hdfs dfs -cat /user/hadoop/input/new_hashtag_donaldtrump.csv  2>/dev/null | head -n 1000 | python3 test_mapper.py | python3 test_reduce.py
+
+find / -name hadoop-*streaming*.jar 2>/dev/null
+/usr/local/hadoop/share/hadoop/tools/sources/hadoop-streaming-3.2.2-sources.jar
+/usr/local/hadoop/share/hadoop/tools/sources/hadoop-streaming-3.2.2-test-sources.jar
+/usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.2.2.jar
+
+$HADOOP_HOME/bin/hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.2.2.jar \
+-input /user/hadoop/input/* -output /user/hadoop/output/LR_count \
+-mapper "python3 ./LR_count_mapper.py" -file LR_count_mapper.py \
+-reducer "python3 ./LR_count_reducer.py" -file LR_count_reducer.py |& tee LR_count.log
+
+$HADOOP_HOME/bin/hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.2.2.jar \
+-input /user/hadoop/input/* -output /user/hadoop/output/state \
+-mapper "python3 ./state_mapper.py" -file state_mapper.py \
+-reducer "python3 ./state_reducer.py" -file state_reducer.py |& tee state.log
+
+$HADOOP_HOME/bin/hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-3.2.2.jar \
+-input /user/hadoop/input/* -output /user/hadoop/output/geo_state \
+-mapper "python3 ./geo_state_mapper.py" -file geo_state_mapper.py \
+-reducer "python3 ./geo_state_reducer.py" -file geo_state_reducer.py |& tee geo_state.log
